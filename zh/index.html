@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-locale="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>超级马里奥：肉鸽奥德赛 — 中文旗舰版</title>
+  <link rel="canonical" href="./">
+  <link rel="alternate" hreflang="zh-CN" href="./">
+  <link rel="alternate" hreflang="en" href="../en/">
+  <link rel="stylesheet" href="../style.css?v=20261120b">
+  <link rel="stylesheet" href="../styles/locale-zh.css?v=20261120b">
+</head>
+<body>
+  <header class="top-bar">
+    <div class="brand">
+      <span class="brand-badge" aria-hidden="true">★ 中文旗舰版 · /ZH</span>
+      <h1>
+        <span data-i18n="brandTitle">超级马里奥：肉鸽奥德赛</span>
+        <span class="sub-en" data-i18n="brandSub">SUPER MARIO: ROGUE ODYSSEY</span>
+      </h1>
+    </div>
+
+    <nav class="top-actions" data-i18n-aria="topNavAria" aria-label="游戏快捷控制">
+      <div class="lang-switch" role="group" data-i18n-aria="langGroupAria" aria-label="语言版本路由切换">
+        <a href="../en/" class="lang-btn" data-lang="en" title="切换到英文街机版 (/en/)">EN <small>/en</small></a>
+        <a href="../zh/" class="lang-btn active" data-lang="zh" aria-current="page" title="当前为中文旗舰版 (/zh/)">中文 <small>/zh</small></a>
+      </div>
+      <button type="button" id="btn-armory" class="pixel-btn btn-secondary">
+        <span aria-hidden="true">⚔️</span> <span data-i18n="btnArmory">武器与圣物图鉴</span>
+      </button>
+      <button type="button" id="btn-shop-open" class="pixel-btn btn-gold">
+        <span aria-hidden="true">🍄</span> <span data-i18n="btnShop">奇诺比奥商店</span> <span id="shop-coin-badge" class="badge-inline">0</span>
+      </button>
+      <button type="button" id="btn-boss-warp" class="pixel-btn btn-danger" data-i18n-title="btnBossWarpTitle" title="直接传送至第5关终焉魔王城挑战最终Boss">
+        <span aria-hidden="true">👑</span> <span data-i18n="btnBossWarp">直通最终Boss</span>
+      </button>
+      <button type="button" id="btn-crt-toggle" class="pixel-btn btn-ghost" aria-pressed="true">
+        CRT 滤镜: 开
+      </button>
+      <div class="audio-controls" role="group" data-i18n-aria="audioGroupAria" aria-label="音量控制">
+        <button type="button" id="btn-mute" class="pixel-btn btn-ghost" aria-pressed="false">
+          🔊 音效
+        </button>
+        <label for="volume-slider" class="sr-only" data-i18n="volumeLabel">音量调节</label>
+        <input type="range" id="volume-slider" min="0" max="100" value="65" data-i18n-aria="volumeAria" aria-label="主音量">
+      </div>
+      <button type="button" id="btn-help" class="pixel-btn btn-ghost" data-i18n="btnHelp">
+        ❓ 操作说明
+      </button>
+    </nav>
+  </header>
+
+  <main class="arcade-layout">
+    <!-- Left Sidebar: Character Stats & Active Relics -->
+    <aside class="side-panel left-panel" data-i18n-aria="leftPanelAria" aria-label="马里奥角色属性">
+      <section class="panel-card">
+        <h2 class="panel-title" data-i18n="marioStatusTitle">MARIO 状态面板</h2>
+        <div class="hero-profile">
+          <canvas id="portrait-canvas" width="64" height="64" aria-hidden="true"></canvas>
+          <div class="hero-meta">
+            <div class="level-pill">LV. <span id="ui-level">1</span></div>
+            <div id="ui-title-rank" class="hero-class">见习跳跃者</div>
+            <div id="ui-star-status" class="star-status" data-i18n="starActive" hidden>🌟 无敌彩虹星生效中!</div>
+          </div>
+        </div>
+
+        <div class="bars-stack">
+          <div class="bar-group">
+            <div class="bar-label">
+              <span data-i18n="labelHp">❤️ 生命值 (HP)</span>
+              <span id="ui-hp-text">100 / 100</span>
+            </div>
+            <div class="pixel-progress hp-bar">
+              <div id="ui-hp-fill" class="pixel-progress-fill" style="--fill-pct: 100%;"></div>
+            </div>
+          </div>
+
+          <div class="bar-group">
+            <div class="bar-label">
+              <span data-i18n="labelExp">⭐ 经验值 (EXP)</span>
+              <span id="ui-xp-text">0 / 100</span>
+            </div>
+            <div class="pixel-progress xp-bar">
+              <div id="ui-xp-fill" class="pixel-progress-fill" style="--fill-pct: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="bar-group">
+            <div class="bar-label">
+              <span data-i18n="labelStamina">⚡ 冲刺/旋风能量</span>
+              <span id="ui-stamina-text">100%</span>
+            </div>
+            <div class="pixel-progress stamina-bar">
+              <div id="ui-stamina-fill" class="pixel-progress-fill" style="--fill-pct: 100%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <dl class="stat-grid">
+          <div class="stat-item">
+            <dt data-i18n="statCoins">🪙 金币</dt>
+            <dd id="stat-coins" class="gold-text">0</dd>
+          </div>
+          <div class="stat-item">
+            <dt data-i18n="statStomp">🥾 踩踏威力</dt>
+            <dd id="stat-stomp">32</dd>
+          </div>
+          <div class="stat-item">
+            <dt data-i18n="statAtk">⚔️ 武器倍率</dt>
+            <dd id="stat-atk">100%</dd>
+          </div>
+          <div class="stat-item">
+            <dt data-i18n="statCrit">💥 暴击率</dt>
+            <dd id="stat-crit">12%</dd>
+          </div>
+          <div class="stat-item">
+            <dt data-i18n="statJumps">🪽 空中连跳</dt>
+            <dd id="stat-jumps">2段</dd>
+          </div>
+          <div class="stat-item">
+            <dt data-i18n="statMaxCombo">🏆 最高连踩</dt>
+            <dd id="stat-max-combo">0连</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="panel-card relics-card">
+        <div class="panel-header-row">
+          <h2 class="panel-title"><span data-i18n="activePerksTitle">已获肉鸽赐福</span> (<span id="ui-perk-count">0</span>)</h2>
+          <button type="button" id="btn-free-levelup" class="mini-tag-btn" data-i18n="btnFreeLevelUp" data-i18n-title="btnFreeLevelUpTitle" title="立即唤醒一次肉鸽升级三选一">
+            + 赐福测试
+          </button>
+        </div>
+        <ul id="ui-active-perks" class="perk-mini-list" data-i18n-aria="activePerksAria" aria-label="当前生效的肉鸽词条列表">
+          <li class="empty-hint" data-i18n="emptyPerksHint">击败敌人或顶碎问号砖获取经验升级，解锁强力肉鸽词条！</li>
+        </ul>
+      </section>
+    </aside>
+
+    <!-- Center Stage: Game Canvas & Weapon Dock -->
+    <section class="stage-center" data-i18n-aria="stageCenterAria" aria-label="游戏主画面">
+      <div id="viewport-wrapper" class="viewport-wrapper crt-enabled">
+        <!-- Top Stage HUD Overlay -->
+        <div class="canvas-hud-top">
+          <div class="stage-info-pill">
+            <span id="hud-biome-icon" aria-hidden="true">🌳</span>
+            <span id="hud-stage-name">WORLD 1-1 · 蘑菇翡翠平原</span>
+          </div>
+          <div class="stage-progress-box" data-i18n-title="stageProgressTitle" title="当前关卡探索进度">
+            <span class="progress-label" data-i18n="stageProgressLabel">🚩 赛段进度</span>
+            <div class="stage-mini-track">
+              <div id="hud-stage-progress" class="stage-mini-fill" style="--stage-pct: 0%;"></div>
+            </div>
+          </div>
+          <div class="combo-badge-wrap">
+            <div id="hud-combo-badge" class="combo-badge" hidden>
+              <span data-i18n="comboPrefix">🔥 空中连踩</span> <span id="hud-combo-num">2</span>x!
+            </div>
+            <div class="score-pill">SCORE <span id="hud-score">000000</span></div>
+          </div>
+        </div>
+
+        <!-- Boss Health Bar Overlay -->
+        <div id="boss-hud" class="boss-hud" hidden>
+          <div class="boss-hud-header">
+            <span id="boss-name-label" class="boss-title">👑 阶段一：铁甲魔王·酷霸王 (IRON BOWSER)</span>
+            <span id="boss-phase-badge" class="boss-phase-pill">PHASE 1 / 3</span>
+          </div>
+          <div class="boss-hp-track">
+            <div id="boss-hp-fill" class="boss-hp-fill" style="--boss-hp: 100%;"></div>
+          </div>
+          <div id="boss-attack-hint" class="boss-hint">提示：跳过震地波，踩踏召唤出的绿龟壳踢向酷霸王可造成巨额破甲伤害！</div>
+        </div>
+
+        <!-- Main Pixel Art Canvas -->
+        <canvas id="game-canvas" width="960" height="540" tabindex="0" data-i18n-aria="canvasAria" aria-label="超级马里奥肉鸽横版动作游戏画布"></canvas>
+
+        <!-- Stage Banner Toast -->
+        <div id="stage-banner" class="stage-banner" hidden aria-live="polite">
+          <div class="banner-sub" id="banner-sub">WORLD 1-1</div>
+          <div class="banner-main" id="banner-main">🌳 蘑菇翡翠平原</div>
+          <div class="banner-desc" id="banner-desc">踩踏栗宝宝与绿龟 · 顶碎问号砖收集星之经验</div>
+        </div>
+      </div>
+
+      <!-- Weapon Hotbar & Action Controls Bar -->
+      <div class="weapon-dock" role="toolbar" data-i18n-aria="weaponDockAria" aria-label="武器切换栏">
+        <div class="dock-label">
+          <span data-i18n="weaponDockTitle">当前武器库</span>
+          <small data-i18n="weaponDockHint">[1-6] 切武器 · [J / 左键] 攻击 · [K / Shift] 冲刺 · [空中 S] 陨石下砸</small>
+        </div>
+        <div id="weapon-slots" class="weapon-slots"></div>
+      </div>
+    </section>
+
+    <!-- Right Sidebar: Controls & Combat Log -->
+    <aside class="side-panel right-panel" data-i18n-aria="rightPanelAria" aria-label="操作指南与战况记录">
+      <section class="panel-card">
+        <h2 class="panel-title" data-i18n="mechanicsTitle">核心动作机制</h2>
+        <ul class="mechanic-list">
+          <li>
+            <strong data-i18n="mechStompTitle">🥾 跳跃踩踏连击 (Stomp Combo)</strong>
+            <p data-i18n-html="mechStompDesc">落在敌人头顶造成高额踩踏伤害并弹起，<strong>不落地连续踩踏</strong>将叠加连击倍率与暴击，并刷新二段跳与空中冲刺！</p>
+          </li>
+          <li>
+            <strong data-i18n="mechPoundTitle">☄️ 陨石下砸 (Ground Pound)</strong>
+            <p data-i18n-html="mechPoundDesc">在空中按 <kbd>S</kbd> 或 <kbd>↓</kbd>，马里奥将高速旋转下砸，落地引发范围冲击波，震飞群怪并击碎强化砖块！</p>
+          </li>
+          <li>
+            <strong data-i18n="mechSpinTitle">🌪️ 旋风斩跳 (Spin Jump)</strong>
+            <p data-i18n-html="mechSpinDesc">按 <kbd>Q</kbd> 发动旋转跳跃，产生多段切割判定并可弹反敌方飞行道具！</p>
+          </li>
+          <li>
+            <strong data-i18n="mechShellTitle">🐢 龟壳保龄球 (Shell Ricochet)</strong>
+            <p data-i18n-html="mechShellDesc">踩缩绿龟/钢盔龟后触碰或攻击龟壳，可将其踢出高速横扫全屏！</p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="panel-card">
+        <h2 class="panel-title" data-i18n="stageJumpTitle">关卡快速传送 &amp; 调试</h2>
+        <div class="quick-stage-grid">
+          <button type="button" class="stage-jump-btn" data-stage="0" data-i18n="stageBtn0">1. 蘑菇平原</button>
+          <button type="button" class="stage-jump-btn" data-stage="1" data-i18n="stageBtn1">2. 地下晶洞</button>
+          <button type="button" class="stage-jump-btn" data-stage="2" data-i18n="stageBtn2">3. 云端遗迹</button>
+          <button type="button" class="stage-jump-btn" data-stage="3" data-i18n="stageBtn3">4. 幽灵古堡</button>
+          <button type="button" class="stage-jump-btn boss-btn" data-stage="4" data-i18n="stageBtn4">5. 魔王终焉城</button>
+          <button type="button" id="btn-unlock-all-weapons" class="stage-jump-btn gold-btn" data-i18n="btnUnlockAll">⚡ 全武器满级体验</button>
+        </div>
+      </section>
+
+      <section class="panel-card log-card">
+        <h2 class="panel-title" data-i18n="combatLogTitle">实时战斗播报</h2>
+        <ul id="combat-log" class="combat-log" aria-live="polite">
+          <li id="welcome-log-item" data-i18n="welcomeLog">🌟 欢迎来到《超级马里奥：肉鸽奥德赛》！按 A/D 移动，空格跳跃，J 发射武器！</li>
+        </ul>
+      </section>
+    </aside>
+  </main>
+
+  <!-- Native Modal 1: Roguelite Level-Up Blessing Selection -->
+  <dialog id="dialog-levelup" aria-labelledby="levelup-title">
+    <div class="modal-inner levelup-modal">
+      <div class="modal-header">
+        <span class="modal-kicker" data-i18n="levelUpKicker">✨ LEVEL UP! 星之力量觉醒 ✨</span>
+        <h2 id="levelup-title" data-i18n="levelUpTitle">选择一项肉鸽赐福强化马里奥</h2>
+        <p class="modal-subtitle">
+          <span data-i18n="levelUpSubtitlePrefix">当前等级提升至 </span><strong>LV.<span id="modal-new-level">2</span></strong><span data-i18n="levelUpSubtitleSuffix"> · 每次选择都将改变你的战斗流派</span>
+        </p>
+      </div>
+      <div id="perk-choices-container" class="perk-cards-grid"></div>
+      <div class="modal-footer">
+        <button type="button" id="btn-reroll-perks" class="pixel-btn btn-gold">
+          <span data-i18n="btnRerollPrefix">🎲 刷新词条 (</span><span id="reroll-cost">15</span><span data-i18n="btnRerollSuffix"> 金币)</span>
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Native Modal 2: Toad's Black Market Shop -->
+  <dialog id="dialog-shop" closedby="any" aria-labelledby="shop-title">
+    <div class="modal-inner shop-modal">
+      <div class="modal-header">
+        <span class="modal-kicker" data-i18n="shopKicker">🍄 TOAD'S CARAVAN · 奇诺比奥流亡黑市</span>
+        <h2 id="shop-title" data-i18n="shopTitle">奇诺比奥神装补给站</h2>
+        <p class="modal-subtitle">
+          <span data-i18n="shopCoinsPrefix">当前持有金币: </span><strong class="gold-text"><span id="shop-modal-coins">0</span> 🪙</strong><span data-i18n="shopCoinsSuffix"> · 购买新武器、升级锻造或恢复生命</span>
+        </p>
+      </div>
+      <div id="shop-items-grid" class="shop-items-grid"></div>
+      <form method="dialog" class="modal-footer">
+        <button value="close" class="pixel-btn btn-primary" data-i18n="shopContinue" autofocus>继续冒险 (ESC)</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Native Modal 3: Armory & Relic Compendium -->
+  <dialog id="dialog-armory" closedby="any" aria-labelledby="armory-title">
+    <div class="modal-inner armory-modal">
+      <div class="modal-header">
+        <span class="modal-kicker" data-i18n="armoryKicker">📖 COMPENDIUM · 武器与肉鸽圣物全图鉴</span>
+        <h2 id="armory-title" data-i18n="armoryTitle">马里奥武器库与赐福图鉴</h2>
+      </div>
+      <div class="compendium-tabs">
+        <h3 class="sub-heading" data-i18n="armoryWeaponsHeading">⚔️ 六大传奇武器系统 (点击可直接切换或解锁体验)</h3>
+        <div id="compendium-weapons" class="compendium-grid"></div>
+        <h3 class="sub-heading" data-i18n="armoryPerksHeading">🌟 肉鸽核心词条池 (24种流派协同)</h3>
+        <div id="compendium-perks" class="compendium-grid perks-catalog"></div>
+      </div>
+      <form method="dialog" class="modal-footer">
+        <button value="close" class="pixel-btn btn-primary" data-i18n="armoryCloseBtn" autofocus>关闭图鉴</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Native Modal 4: Controls & Gameplay Help -->
+  <dialog id="dialog-help" closedby="any" aria-labelledby="help-title">
+    <div class="modal-inner help-modal">
+      <div class="modal-header">
+        <span class="modal-kicker" data-i18n="helpKicker">🎮 HOW TO PLAY · 动作指南</span>
+        <h2 id="help-title" data-i18n="helpTitle">按键操作与进阶技巧</h2>
+      </div>
+      <div class="help-grid">
+        <div class="help-box">
+          <h3 data-i18n="helpMoveHeading">基础移动与跳跃</h3>
+          <ul data-i18n-html="helpMoveList">
+            <li><kbd>A</kbd> / <kbd>D</kbd> 或 <kbd>←</kbd> / <kbd>→</kbd>：左右奔跑</li>
+            <li><kbd>W</kbd> / <kbd>空格</kbd> / <kbd>↑</kbd>：跳跃（支持二段跳）</li>
+            <li><kbd>Q</kbd>：旋风切割跳（多段伤害 + 弹反子弹）</li>
+            <li>空中按 <kbd>S</kbd> 或 <kbd>↓</kbd>：<strong>陨石重锤下砸 (Ground Pound)</strong></li>
+          </ul>
+        </div>
+        <div class="help-box">
+          <h3 data-i18n="helpCombatHeading">武器、冲刺与交互</h3>
+          <ul data-i18n-html="helpCombatList">
+            <li><kbd>J</kbd> / <kbd>F</kbd> / <strong>鼠标左键</strong>：使用当前主武器攻击</li>
+            <li><kbd>K</kbd> / <kbd>Shift</kbd> / <strong>鼠标右键</strong>：无敌幻影冲刺 (Dash)</li>
+            <li><kbd>1</kbd> ~ <kbd>6</kbd> 或 <kbd>E</kbd>：实时切换已解锁武器</li>
+            <li><kbd>B</kbd>：随时打开奇诺比奥黑市商店</li>
+          </ul>
+        </div>
+      </div>
+      <form method="dialog" class="modal-footer">
+        <button value="close" class="pixel-btn btn-primary" data-i18n="helpCloseBtn" autofocus>返回游戏</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Native Modal 5: Run Victory / Game Over Summary -->
+  <dialog id="dialog-gameover" aria-labelledby="gameover-title">
+    <div class="modal-inner gameover-modal">
+      <div class="modal-header">
+        <span id="gameover-kicker" class="modal-kicker">🏆 VICTORY!</span>
+        <h2 id="gameover-title">成功击败终焉魔王酷霸王！</h2>
+        <p id="gameover-subtitle" class="modal-subtitle">蘑菇王国重获和平！</p>
+      </div>
+      <dl class="summary-stats" id="gameover-stats"></dl>
+      <form method="dialog" class="modal-footer">
+        <button value="revive" id="btn-revive-run" class="pixel-btn btn-gold">🍀 消耗 1-UP 神菇满血复活</button>
+        <button value="newrun" id="btn-new-run" class="pixel-btn btn-primary" data-i18n="btnNewRun" autofocus>🔄 开启新一轮肉鸽征程</button>
+      </form>
+    </div>
+  </dialog>
+
+  <script type="module" src="../js/game.js?v=20261120b"></script>
+</body>
+</html>

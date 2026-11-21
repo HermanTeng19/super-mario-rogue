@@ -1,0 +1,95 @@
+/* ==========================================================================
+   ENGLISH EDITION (/en/) — RETRO ARCADE CABINET UI OPTIMIZATIONS
+   Tuned for Latin letterforms, arcade uppercase rhythm, & zero label truncation
+   ========================================================================== */
+
+:root {
+  --font-display: 'Trebuchet MS', 'Courier New', 'Menlo', monospace;
+  --font-body: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-pixel: 'Courier New', 'Monaco', 'Menlo', monospace;
+  --locale-accent: #049cd8;
+  --locale-accent-border: #7dd3fc;
+}
+
+/* Wider sidebars for multi-word English stats & mechanic prose */
+.arcade-layout {
+  grid-template-columns: 282px minmax(640px, 1fr) 288px;
+}
+
+.brand-badge {
+  background: linear-gradient(135deg, #e52521 0%, #b91c1c 100%);
+  border-color: #fca5a5;
+}
+
+.brand h1 {
+  font-family: var(--font-pixel);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.panel-title {
+  letter-spacing: 0.08em;
+  font-size: 0.84rem;
+}
+
+/* Crisp readable Latin body text inside cards & modals */
+.mechanic-list li p,
+.shop-item-desc,
+.perk-desc,
+.comp-card p,
+.empty-hint,
+.combat-log li,
+.help-box ul {
+  font-family: var(--font-body);
+  line-height: 1.44;
+  letter-spacing: 0.01em;
+}
+
+.mechanic-list li {
+  padding: 0.48rem 0.58rem;
+}
+
+/* Arcade Hotbar: tight horizontal padding & crisp uppercase short names */
+.weapon-slot-btn {
+  padding: 0.42rem 0.42rem;
+}
+
+.slot-name {
+  font-size: 0.74rem;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.slot-sub {
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+}
+
+.dock-label small {
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+}
+
+/* Stage banner arcade typography */
+.banner-main {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* English route active pill */
+.lang-btn[aria-current="page"] {
+  background: var(--locale-accent);
+  color: #fff;
+}
+
+@media (max-width: 1280px) {
+  .arcade-layout {
+    grid-template-columns: 255px 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .arcade-layout {
+    grid-template-columns: 1fr;
+  }
+}

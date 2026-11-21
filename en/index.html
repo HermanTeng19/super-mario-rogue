@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" data-locale="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SUPER MARIO: ROGUE ODYSSEY — Arcade Edition</title>
+  <link rel="canonical" href="./">
+  <link rel="alternate" hreflang="en" href="./">
+  <link rel="alternate" hreflang="zh-CN" href="../zh/">
+  <link rel="stylesheet" href="../style.css?v=20261120b">
+  <link rel="stylesheet" href="../styles/locale-en.css?v=20261120b">
+</head>
+<body>
+  <header class="top-bar">
+    <div class="brand">
+      <span class="brand-badge" aria-hidden="true">★ ARCADE · /EN</span>
+      <h1>
+        <span data-i18n="brandTitle">SUPER MARIO: ROGUE ODYSSEY</span>
+        <span class="sub-en" data-i18n="brandSub">16-BIT ACTION ROGUELITE</span>
+      </h1>
+    </div>
+
+    <nav class="top-actions" data-i18n-aria="topNavAria" aria-label="Quick game controls">
+      <div class="lang-switch" role="group" data-i18n-aria="langGroupAria" aria-label="Language edition routes">
+        <a href="../en/" class="lang-btn active" data-lang="en" aria-current="page" title="English Arcade Route (/en/)">EN <small>/en</small></a>
+        <a href="../zh/" class="lang-btn" data-lang="zh" title="Switch to Chinese Route (/zh/)">中文 <small>/zh</small></a>
+      </div>
+      <button type="button" id="btn-armory" class="pixel-btn btn-secondary">
+        <span aria-hidden="true">⚔️</span> <span data-i18n="btnArmory">Armory &amp; Relics</span>
+      </button>
+      <button type="button" id="btn-shop-open" class="pixel-btn btn-gold">
+        <span aria-hidden="true">🍄</span> <span data-i18n="btnShop">Toad's Shop</span> <span id="shop-coin-badge" class="badge-inline">0</span>
+      </button>
+      <button type="button" id="btn-boss-warp" class="pixel-btn btn-danger" data-i18n-title="btnBossWarpTitle" title="Warp directly to Final Keep (Stage 5) to fight the Final Boss">
+        <span aria-hidden="true">👑</span> <span data-i18n="btnBossWarp">Warp to Boss</span>
+      </button>
+      <button type="button" id="btn-crt-toggle" class="pixel-btn btn-ghost" aria-pressed="true">
+        CRT: ON
+      </button>
+      <div class="audio-controls" role="group" data-i18n-aria="audioGroupAria" aria-label="Audio controls">
+        <button type="button" id="btn-mute" class="pixel-btn btn-ghost" aria-pressed="false">
+          🔊 SFX
+        </button>
+        <label for="volume-slider" class="sr-only" data-i18n="volumeLabel">Volume</label>
+        <input type="range" id="volume-slider" min="0" max="100" value="65" data-i18n-aria="volumeAria" aria-label="Master volume">
+      </div>
+      <button type="button" id="btn-help" class="pixel-btn btn-ghost" data-i18n="btnHelp">
+        ❓ Controls
+      </button>
+    </nav>
+  </header>
+
+  <main class="arcade-layout">
+    <!-- Left Sidebar: Character Stats & Active Relics -->
+    <aside class="side-panel left-panel" data-i18n-aria="leftPanelAria" aria-label="Mario Character Stats">
+      <section class="panel-card">
+        <h2 class="panel-title" data-i18n="marioStatusTitle">MARIO STATUS</h2>
+        <div class="hero-profile">
+          <canvas id="portrait-canvas" width="64" height="64" aria-hidden="true"></canvas>
+          <div class="hero-meta">
+            <div class="level-pill">LV. <span id="ui-level">1</span></div>
+            <div id="ui-title-rank" class="hero-class">Rookie Jumper</div>
+            <div id="ui-star-status" class="star-status" data-i18n="starActive" hidden>🌟 Rainbow Star Invincible!</div>
+          </div>
+        </div>
+
+        <div class="bars-stack">
+          <div class="bar-group">
+            <div class="bar-label">
+              <span data-i18n="labelHp">❤️ Health (HP)</span>
+              <span id="ui-hp-text">100 / 100</span>
+            </div>
+            <div class="pixel-progress hp-bar">
+              <div id="ui-hp-fill" class="pixel-progress-fill" style="--fill-pct: 100%;"></div>
+            </div>
+          </div>
+
+          <div class="bar-group">
+            <div class="bar-label">
+              <span data-i18n="labelExp">⭐ Experience (EXP)</span>
+              <span id="ui-xp-text">0 / 100</span>
+            </div>
+            <div class="pixel-progress xp-bar">
+              <div id="ui-xp-fill" class="pixel-progress-fill" style="--fill-pct: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="bar-group">
+            <div class="bar-label">
+              <span data-i18n="labelStamina">⚡ Dash / Spin Energy</span>
+              <span id="ui-stamina-text">100%</span>
+            </div>
+            <div class="pixel-progress stamina-bar">
+              <div id="ui-stamina-fill" class="pixel-progress-fill" style="--fill-pct: 100%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <dl class="stat-grid">
+          <div class="stat-item">
+            <dt data-i18n="statCoins">🪙 Coins</dt>
+            <dd id="stat-coins" class="gold-text">0</dd>
+          </div>
+          <div class="stat-item">
+            <dt data-i18n="statStomp">🥾 Stomp Power</dt>
+            <dd id="stat-stomp">32</dd>
+          </div>
+          <div class="stat-item">
+            <dt data-i18n="statAtk">⚔️ Weapon Mult</dt>
+            <dd id="stat-atk">100%</dd>
+          </div>
+          <div class="stat-item">
+            <dt data-i18n="statCrit">💥 Crit Rate</dt>
+            <dd id="stat-crit">12%</dd>
+          </div>
+          <div class="stat-item">
+            <dt data-i18n="statJumps">🪽 Air Jumps</dt>
+            <dd id="stat-jumps">2x</dd>
+          </div>
+          <div class="stat-item">
+            <dt data-i18n="statMaxCombo">🏆 Best Combo</dt>
+            <dd id="stat-max-combo">0x</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="panel-card relics-card">
+        <div class="panel-header-row">
+          <h2 class="panel-title"><span data-i18n="activePerksTitle">Active Blessings</span> (<span id="ui-perk-count">0</span>)</h2>
+          <button type="button" id="btn-free-levelup" class="mini-tag-btn" data-i18n="btnFreeLevelUp" data-i18n-title="btnFreeLevelUpTitle" title="Trigger a Roguelite 3-choice level-up blessing immediately">
+            + Test Blessing
+          </button>
+        </div>
+        <ul id="ui-active-perks" class="perk-mini-list" data-i18n-aria="activePerksAria" aria-label="Active roguelite perks list">
+          <li class="empty-hint" data-i18n="emptyPerksHint">Defeat enemies or smash ? blocks to gain EXP, level up, and unlock roguelite blessings!</li>
+        </ul>
+      </section>
+    </aside>
+
+    <!-- Center Stage: Game Canvas & Weapon Dock -->
+    <section class="stage-center" data-i18n-aria="stageCenterAria" aria-label="Main Game Stage">
+      <div id="viewport-wrapper" class="viewport-wrapper crt-enabled">
+        <!-- Top Stage HUD Overlay -->
+        <div class="canvas-hud-top">
+          <div class="stage-info-pill">
+            <span id="hud-biome-icon" aria-hidden="true">🌳</span>
+            <span id="hud-stage-name">WORLD 1-1 · Mushroom Emerald Plains</span>
+          </div>
+          <div class="stage-progress-box" data-i18n-title="stageProgressTitle" title="Current stage exploration progress">
+            <span class="progress-label" data-i18n="stageProgressLabel">🚩 Progress</span>
+            <div class="stage-mini-track">
+              <div id="hud-stage-progress" class="stage-mini-fill" style="--stage-pct: 0%;"></div>
+            </div>
+          </div>
+          <div class="combo-badge-wrap">
+            <div id="hud-combo-badge" class="combo-badge" hidden>
+              <span data-i18n="comboPrefix">🔥 AIR STOMP</span> <span id="hud-combo-num">2</span>x!
+            </div>
+            <div class="score-pill">SCORE <span id="hud-score">000000</span></div>
+          </div>
+        </div>
+
+        <!-- Boss Health Bar Overlay -->
+        <div id="boss-hud" class="boss-hud" hidden>
+          <div class="boss-hud-header">
+            <span id="boss-name-label" class="boss-title">👑 PHASE 1: IRON BOWSER</span>
+            <span id="boss-phase-badge" class="boss-phase-pill">PHASE 1 / 3</span>
+          </div>
+          <div class="boss-hp-track">
+            <div id="boss-hp-fill" class="boss-hp-fill" style="--boss-hp: 100%;"></div>
+          </div>
+          <div id="boss-attack-hint" class="boss-hint">Tip: Jump over shockwaves &amp; kick summoned Koopa shells into Bowser!</div>
+        </div>
+
+        <!-- Main Pixel Art Canvas -->
+        <canvas id="game-canvas" width="960" height="540" tabindex="0" data-i18n-aria="canvasAria" aria-label="Super Mario Rogue Odyssey pixel-art action canvas"></canvas>
+
+        <!-- Stage Banner Toast -->
+        <div id="stage-banner" class="stage-banner" hidden aria-live="polite">
+          <div class="banner-sub" id="banner-sub">WORLD 1-1</div>
+          <div class="banner-main" id="banner-main">🌳 Mushroom Emerald Plains</div>
+          <div class="banner-desc" id="banner-desc">Stomp Goombas &amp; Koopas · Smash ? Blocks for Star EXP</div>
+        </div>
+      </div>
+
+      <!-- Weapon Hotbar & Action Controls Bar -->
+      <div class="weapon-dock" role="toolbar" data-i18n-aria="weaponDockAria" aria-label="Weapon hotbar">
+        <div class="dock-label">
+          <span data-i18n="weaponDockTitle">ARSENAL</span>
+          <small data-i18n="weaponDockHint">[1-6] Switch · [J / LMB] Attack · [K / Shift] Dash · [Midair S] Slam</small>
+        </div>
+        <div id="weapon-slots" class="weapon-slots"></div>
+      </div>
+    </section>
+
+    <!-- Right Sidebar: Mechanics & Combat Log -->
+    <aside class="side-panel right-panel" data-i18n-aria="rightPanelAria" aria-label="Mechanics Guide & Combat Log">
+      <section class="panel-card">
+        <h2 class="panel-title" data-i18n="mechanicsTitle">CORE MECHANICS</h2>
+        <ul class="mechanic-list">
+          <li>
+            <strong data-i18n="mechStompTitle">🥾 Aerial Stomp Combo</strong>
+            <p data-i18n-html="mechStompDesc">Land on enemy heads for high stomp damage &amp; bounce. <strong>Chain stomps without touching ground</strong> to scale damage, crit, and refresh air jumps!</p>
+          </li>
+          <li>
+            <strong data-i18n="mechPoundTitle">☄️ Meteor Ground Pound</strong>
+            <p data-i18n-html="mechPoundDesc">Press <kbd>S</kbd> or <kbd>↓</kbd> in midair to slam down at high speed, unleashing a shockwave that blasts foes and shatters blocks!</p>
+          </li>
+          <li>
+            <strong data-i18n="mechSpinTitle">🌪️ Cyclone Spin Jump</strong>
+            <p data-i18n-html="mechSpinDesc">Press <kbd>Q</kbd> for a spinning leap with multi-hit slashes that deflects enemy projectiles!</p>
+          </li>
+          <li>
+            <strong data-i18n="mechShellTitle">🐢 Shell Ricochet</strong>
+            <p data-i18n-html="mechShellDesc">Stomp a Koopa into its shell, then kick or hit it to bowl through enemies across the screen!</p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="panel-card">
+        <h2 class="panel-title" data-i18n="stageJumpTitle">STAGE WARP &amp; DEBUG</h2>
+        <div class="quick-stage-grid">
+          <button type="button" class="stage-jump-btn" data-stage="0" data-i18n="stageBtn0">1. Emerald Plains</button>
+          <button type="button" class="stage-jump-btn" data-stage="1" data-i18n="stageBtn1">2. Crystal Cavern</button>
+          <button type="button" class="stage-jump-btn" data-stage="2" data-i18n="stageBtn2">3. Sky Ruins</button>
+          <button type="button" class="stage-jump-btn" data-stage="3" data-i18n="stageBtn3">4. Ghost Keep</button>
+          <button type="button" class="stage-jump-btn boss-btn" data-stage="4" data-i18n="stageBtn4">5. Bowser Keep</button>
+          <button type="button" id="btn-unlock-all-weapons" class="stage-jump-btn gold-btn" data-i18n="btnUnlockAll">⚡ Max All Weapons</button>
+        </div>
+      </section>
+
+      <section class="panel-card log-card">
+        <h2 class="panel-title" data-i18n="combatLogTitle">COMBAT LOG</h2>
+        <ul id="combat-log" class="combat-log" aria-live="polite">
+          <li id="welcome-log-item" data-i18n="welcomeLog">🌟 Welcome to SUPER MARIO: ROGUE ODYSSEY! Move with A/D, Jump with Space, Attack with J or Click!</li>
+        </ul>
+      </section>
+    </aside>
+  </main>
+
+  <!-- Native Modal 1: Roguelite Level-Up Blessing Selection -->
+  <dialog id="dialog-levelup" aria-labelledby="levelup-title">
+    <div class="modal-inner levelup-modal">
+      <div class="modal-header">
+        <span class="modal-kicker" data-i18n="levelUpKicker">✨ LEVEL UP! STAR POWER AWAKENED ✨</span>
+        <h2 id="levelup-title" data-i18n="levelUpTitle">Choose a Roguelite Blessing for Mario</h2>
+        <p class="modal-subtitle">
+          <span data-i18n="levelUpSubtitlePrefix">Reached </span><strong>LV.<span id="modal-new-level">2</span></strong><span data-i18n="levelUpSubtitleSuffix"> · Every blessing reshapes your combat build</span>
+        </p>
+      </div>
+      <div id="perk-choices-container" class="perk-cards-grid"></div>
+      <div class="modal-footer">
+        <button type="button" id="btn-reroll-perks" class="pixel-btn btn-gold">
+          <span data-i18n="btnRerollPrefix">🎲 Reroll (</span><span id="reroll-cost">15</span><span data-i18n="btnRerollSuffix"> Coins)</span>
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Native Modal 2: Toad's Black Market Shop -->
+  <dialog id="dialog-shop" closedby="any" aria-labelledby="shop-title">
+    <div class="modal-inner shop-modal">
+      <div class="modal-header">
+        <span class="modal-kicker" data-i18n="shopKicker">🍄 TOAD'S CARAVAN · BLACK MARKET</span>
+        <h2 id="shop-title" data-i18n="shopTitle">Toad's Legendary Armory &amp; Supplies</h2>
+        <p class="modal-subtitle">
+          <span data-i18n="shopCoinsPrefix">Coins: </span><strong class="gold-text"><span id="shop-modal-coins">0</span> 🪙</strong><span data-i18n="shopCoinsSuffix"> · Unlock weapons, forge upgrades, or restore HP</span>
+        </p>
+      </div>
+      <div id="shop-items-grid" class="shop-items-grid"></div>
+      <form method="dialog" class="modal-footer">
+        <button value="close" class="pixel-btn btn-primary" data-i18n="shopContinue" autofocus>Back to Adventure (ESC)</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Native Modal 3: Armory & Relic Compendium -->
+  <dialog id="dialog-armory" closedby="any" aria-labelledby="armory-title">
+    <div class="modal-inner armory-modal">
+      <div class="modal-header">
+        <span class="modal-kicker" data-i18n="armoryKicker">📖 COMPENDIUM · WEAPONS &amp; RELICS</span>
+        <h2 id="armory-title" data-i18n="armoryTitle">Mario's Arsenal &amp; Blessing Codex</h2>
+      </div>
+      <div class="compendium-tabs">
+        <h3 class="sub-heading" data-i18n="armoryWeaponsHeading">⚔️ 6 Legendary Weapons (Click to equip or unlock free)</h3>
+        <div id="compendium-weapons" class="compendium-grid"></div>
+        <h3 class="sub-heading" data-i18n="armoryPerksHeading">🌟 Roguelite Blessing Pool (24 Synergies)</h3>
+        <div id="compendium-perks" class="compendium-grid perks-catalog"></div>
+      </div>
+      <form method="dialog" class="modal-footer">
+        <button value="close" class="pixel-btn btn-primary" data-i18n="armoryCloseBtn" autofocus>Close Compendium</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Native Modal 4: Controls & Gameplay Help -->
+  <dialog id="dialog-help" closedby="any" aria-labelledby="help-title">
+    <div class="modal-inner help-modal">
+      <div class="modal-header">
+        <span class="modal-kicker" data-i18n="helpKicker">🎮 HOW TO PLAY · ACTION GUIDE</span>
+        <h2 id="help-title" data-i18n="helpTitle">Controls &amp; Advanced Techniques</h2>
+      </div>
+      <div class="help-grid">
+        <div class="help-box">
+          <h3 data-i18n="helpMoveHeading">Movement &amp; Aerial Combat</h3>
+          <ul data-i18n-html="helpMoveList">
+            <li><kbd>A</kbd> / <kbd>D</kbd> or <kbd>←</kbd> / <kbd>→</kbd>: Run left / right</li>
+            <li><kbd>W</kbd> / <kbd>Space</kbd> / <kbd>↑</kbd>: Jump &amp; Double Jump</li>
+            <li><kbd>Q</kbd>: Spin Jump (Multi-hit + Deflect Projectiles)</li>
+            <li>Midair <kbd>S</kbd> or <kbd>↓</kbd>: <strong>Meteor Ground Pound</strong></li>
+          </ul>
+        </div>
+        <div class="help-box">
+          <h3 data-i18n="helpCombatHeading">Weapons, Dash &amp; Shop</h3>
+          <ul data-i18n-html="helpCombatList">
+            <li><kbd>J</kbd> / <kbd>F</kbd> / <strong>Left Click</strong>: Fire equipped weapon</li>
+            <li><kbd>K</kbd> / <kbd>Shift</kbd> / <strong>Right Click</strong>: Invincible Phantom Dash</li>
+            <li><kbd>1</kbd> ~ <kbd>6</kbd> or <kbd>E</kbd>: Switch unlocked weapons</li>
+            <li><kbd>B</kbd>: Open Toad's Black Market Shop anytime</li>
+          </ul>
+        </div>
+      </div>
+      <form method="dialog" class="modal-footer">
+        <button value="close" class="pixel-btn btn-primary" data-i18n="helpCloseBtn" autofocus>Return to Game</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Native Modal 5: Run Victory / Game Over Summary -->
+  <dialog id="dialog-gameover" aria-labelledby="gameover-title">
+    <div class="modal-inner gameover-modal">
+      <div class="modal-header">
+        <span id="gameover-kicker" class="modal-kicker">🏆 VICTORY!</span>
+        <h2 id="gameover-title">You Defeated Mecha-Crowned Bowser!</h2>
+        <p id="gameover-subtitle" class="modal-subtitle">The Mushroom Kingdom is saved!</p>
+      </div>
+      <dl class="summary-stats" id="gameover-stats"></dl>
+      <form method="dialog" class="modal-footer">
+        <button value="revive" id="btn-revive-run" class="pixel-btn btn-gold">🍀 Use 1-UP Mushroom to Revive</button>
+        <button value="newrun" id="btn-new-run" class="pixel-btn btn-primary" data-i18n="btnNewRun" autofocus>🔄 Start New Roguelite Run</button>
+      </form>
+    </div>
+  </dialog>
+
+  <script type="module" src="../js/game.js?v=20261120b"></script>
+</body>
+</html>

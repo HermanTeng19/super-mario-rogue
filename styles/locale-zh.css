@@ -1,0 +1,130 @@
+/* ==========================================================================
+   CHINESE EDITION (/zh/) — CJK 黄金排版与街机高密度视觉优化
+   针对中文方块字的高信息密度优化侧栏宽度、画布视野、行高与小字清晰度
+   ========================================================================== */
+
+:root {
+  --font-cjk: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  --font-pixel: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Courier New', monospace;
+  --locale-accent: #dc2626;
+  --locale-gold-glow: rgba(251, 208, 0, 0.22);
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(229, 37, 33, 0.16) 0%, transparent 42%),
+    radial-gradient(circle at 88% 82%, rgba(251, 208, 0, 0.1) 0%, transparent 42%),
+    linear-gradient(180deg, #0a0c16 0%, #14172a 100%);
+}
+
+/* 中文词汇紧凑，收窄左右边栏为中央 16:9 游戏主画布释放更大视野 */
+.arcade-layout {
+  grid-template-columns: 254px minmax(690px, 1fr) 260px;
+}
+
+/* 国风赤金徽章与清晰中文标题字距 */
+.brand-badge {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  border-color: var(--coin-gold);
+  color: #fef9c3;
+}
+
+.brand h1 {
+  font-family: var(--font-cjk);
+  font-size: 1.2rem;
+  letter-spacing: 0.06em;
+}
+
+/* 提升小号汉字清晰度与舒适行高（避免像素等宽字导致的汉字糊边） */
+.panel-title {
+  font-family: var(--font-cjk);
+  font-size: 0.92rem;
+  letter-spacing: 0.08em;
+}
+
+.hero-class,
+.bar-label,
+.stat-item dt,
+.empty-hint,
+.mechanic-list li,
+.mechanic-list li p,
+.combat-log,
+.shop-item-desc,
+.perk-desc,
+.comp-card p,
+.help-box ul,
+.modal-subtitle {
+  font-family: var(--font-cjk);
+  letter-spacing: 0.025em;
+}
+
+.mechanic-list li {
+  font-size: 0.77rem;
+  line-height: 1.56;
+  padding: 0.45rem 0.55rem;
+}
+
+.stat-item dt {
+  font-size: 0.73rem;
+}
+
+.empty-hint,
+.combat-log {
+  font-size: 0.76rem;
+  line-height: 1.54;
+}
+
+/* 战斗播报区适当加高，便于中文玩家快速扫读连招与战果 */
+.combat-log {
+  max-height: 205px;
+}
+
+/* 武器栏完整展示四至六字中文名，增加微弱金边高亮 */
+.slot-name {
+  font-family: var(--font-cjk);
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+}
+
+.slot-sub {
+  font-family: var(--font-cjk);
+  font-size: 0.7rem;
+}
+
+.weapon-slot-btn.active {
+  background: linear-gradient(180deg, #273459 0%, #1c2847 100%);
+  box-shadow: 0 0 14px var(--locale-gold-glow);
+}
+
+/* 弹窗卡片中文阅读节奏优化 */
+.perk-title,
+.shop-item-title,
+.modal-header h2 {
+  font-family: var(--font-cjk);
+  letter-spacing: 0.04em;
+}
+
+.perk-desc,
+.shop-item-desc,
+.comp-card p {
+  font-size: 0.8rem;
+  line-height: 1.58;
+}
+
+/* 中文路由选中态采用赤红高亮 */
+.lang-btn[aria-current="page"] {
+  background: var(--locale-accent);
+  color: #fef9c3;
+}
+
+@media (max-width: 1280px) {
+  .arcade-layout {
+    grid-template-columns: 238px 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .arcade-layout {
+    grid-template-columns: 1fr;
+  }
+}
