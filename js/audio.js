@@ -22,6 +22,24 @@ export class SoundEngine {
     }
   }
 
+  unlock() {
+    this.init();
+    if (!this.ctx) return;
+    try {
+      if (this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
+      // Play a 1-sample silent buffer to guarantee unlock on iOS Safari
+      const buf = this.ctx.createBuffer(1, 1, 22050);
+      const src = this.ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(this.ctx.destination);
+      src.start(0);
+    } catch {
+      // Ignore unlock errors
+    }
+  }
+
   setVolume(val) {
     this.volume = Math.max(0, Math.min(1, val));
   }

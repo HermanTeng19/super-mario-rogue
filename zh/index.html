@@ -2,13 +2,21 @@
 <html lang="zh-CN" data-locale="zh">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#101424">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>超级马里奥：肉鸽奥德赛 — 中文旗舰版</title>
+  <link rel="manifest" href="../manifest.json">
+  <link rel="icon" type="image/svg+xml" href="../icons/icon.svg">
+  <link rel="apple-touch-icon" href="../icons/icon.svg">
   <link rel="canonical" href="./">
   <link rel="alternate" hreflang="zh-CN" href="./">
   <link rel="alternate" hreflang="en" href="../en/">
-  <link rel="stylesheet" href="../style.css?v=20261120b">
-  <link rel="stylesheet" href="../styles/locale-zh.css?v=20261120b">
+  <link rel="stylesheet" href="../style.css?v=20261121a">
+  <link rel="stylesheet" href="../styles/locale-zh.css?v=20261121a">
+  <link rel="stylesheet" href="../styles/mobile.css?v=20261121a">
 </head>
 <body>
   <header class="top-bar">
@@ -342,6 +350,124 @@
     </div>
   </dialog>
 
-  <script type="module" src="../js/game.js?v=20261120b"></script>
+  <!-- 移动端掌机 HUD、多点触控虚拟手柄、横屏提示与暂停菜单（桌面端完全隐藏） -->
+  <div class="mobile-hud-bar" aria-label="掌机状态栏">
+    <div class="mobile-hud-left">
+      <div class="m-hp-wrap" aria-label="生命值">
+        <span aria-hidden="true">❤️</span>
+        <div class="m-hp-track"><div id="m-hp-fill" class="m-hp-fill" style="--m-hp-pct: 100%;"></div></div>
+        <span id="m-hp-num">100</span>
+      </div>
+      <span id="m-lv-num" class="m-stat-pill">LV.1</span>
+      <span class="m-stat-pill gold-text">🪙 <span id="m-coin-num">30</span></span>
+    </div>
+    <div class="mobile-hud-center">
+      <span id="m-stage-code" class="m-stat-pill m-stage-code">🌳 WORLD 1-1</span>
+      <span id="m-combo-pill" class="m-combo-pill" hidden>🔥 2x</span>
+      <span class="m-stat-pill">★ <span id="m-score-num">000000</span></span>
+    </div>
+    <div class="mobile-hud-right">
+      <button type="button" id="m-btn-shop" class="m-hud-btn gold" aria-label="打开奇诺比奥商店">🍄 商店</button>
+      <button type="button" id="m-btn-menu" class="m-hud-btn" aria-label="打开掌机菜单">☰ 菜单</button>
+      <button type="button" id="m-btn-fullscreen" class="m-hud-btn" aria-label="切换全屏">⛶</button>
+    </div>
+  </div>
+
+  <div class="touch-gamepad" role="group" aria-label="多点触控虚拟手柄">
+    <div id="touch-dpad-zone" class="touch-dpad-zone" aria-label="左右滑动方向键">
+      <div id="touch-btn-left" class="dpad-btn" aria-hidden="true">◀</div>
+      <div id="touch-btn-right" class="dpad-btn" aria-hidden="true">▶</div>
+    </div>
+
+    <div class="touch-action-zone">
+      <button type="button" id="touch-weapon-pill" class="touch-weapon-pill" aria-label="切换当前武器">
+        <span id="touch-weapon-label">🔥 烈焰花法杖 LV.1</span>
+        <span aria-hidden="true">↻</span>
+      </button>
+      <div class="touch-action-grid">
+        <button type="button" id="touch-btn-spin" class="touch-btn touch-btn-spin" aria-label="旋风跳">
+          <span class="t-icon" aria-hidden="true">🌪️</span>
+          <span class="t-label">旋风</span>
+        </button>
+        <button type="button" id="touch-btn-slam" class="touch-btn touch-btn-slam" aria-label="陨石下砸">
+          <span class="t-icon" aria-hidden="true">☄️</span>
+          <span class="t-label">下砸</span>
+        </button>
+        <button type="button" id="touch-btn-dash" class="touch-btn touch-btn-dash" aria-label="无敌冲刺">
+          <span class="t-icon" aria-hidden="true">⚡</span>
+          <span class="t-label">冲刺</span>
+        </button>
+        <button type="button" id="touch-btn-atk" class="touch-btn touch-btn-atk" aria-label="武器攻击">
+          <span class="t-icon" aria-hidden="true">🔥</span>
+          <span class="t-label">攻击</span>
+        </button>
+        <button type="button" id="touch-btn-jump" class="touch-btn touch-btn-jump" aria-label="跳跃">
+          <span class="t-icon" aria-hidden="true">⬆</span>
+          <span class="t-label">跳跃</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="portrait-rotate-gate" role="region" aria-label="横屏游玩提示">
+    <div class="rotate-phone-glyph" aria-hidden="true">📱</div>
+    <h2>请横屏游玩</h2>
+    <p>将手机横置即可开启 16:9 全屏掌机视野与多点触控虚拟手柄。</p>
+    <button type="button" id="btn-play-portrait" class="pixel-btn btn-primary">继续竖屏游玩</button>
+  </div>
+
+  <dialog id="dialog-mobile-menu" closedby="any" aria-labelledby="mobile-menu-title">
+    <div class="modal-inner">
+      <div class="modal-header">
+        <span class="modal-kicker">🎮 掌机暂停菜单 · /ZH</span>
+        <h2 id="mobile-menu-title">角色状态与快捷操作</h2>
+      </div>
+      <div class="mobile-menu-stats">
+        <div class="mobile-menu-stat"><span>等级</span><strong id="m-stat-lv">LV.1</strong></div>
+        <div class="mobile-menu-stat"><span>生命</span><strong id="m-stat-hp">100/100</strong></div>
+        <div class="mobile-menu-stat"><span>金币</span><strong id="m-stat-coins" class="gold-text">30 🪙</strong></div>
+        <div class="mobile-menu-stat"><span>踩踏</span><strong id="m-stat-stomp">32</strong></div>
+        <div class="mobile-menu-stat"><span>武器</span><strong id="m-stat-atk">100%</strong></div>
+        <div class="mobile-menu-stat"><span>赐福</span><strong id="m-stat-perks">0</strong></div>
+      </div>
+      <div class="mobile-menu-section">
+        <h3>语言版本路由与设置</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center;">
+          <div class="lang-switch" role="group" aria-label="语言版本路由切换">
+            <a href="../en/" class="lang-btn" data-lang="en">EN <small>/en</small></a>
+            <a href="../zh/" class="lang-btn active" data-lang="zh" aria-current="page">中文 <small>/zh</small></a>
+          </div>
+          <button type="button" id="m-menu-mute" class="pixel-btn btn-ghost">🔊 音效</button>
+          <button type="button" id="m-menu-crt" class="pixel-btn btn-ghost">CRT 滤镜: 开</button>
+        </div>
+      </div>
+      <div class="mobile-menu-section">
+        <h3>肉鸽功能与商店</h3>
+        <div class="mobile-menu-grid">
+          <button type="button" id="m-menu-shop" class="pixel-btn btn-gold">🍄 奇诺比奥商店</button>
+          <button type="button" id="m-menu-armory" class="pixel-btn btn-secondary">⚔️ 武器与圣物图鉴</button>
+          <button type="button" id="m-menu-levelup" class="pixel-btn btn-primary">✨ 赐福三选一测试</button>
+          <button type="button" id="m-menu-unlock" class="pixel-btn btn-gold">⚡ 全武器满级体验</button>
+          <button type="button" id="m-menu-boss" class="pixel-btn btn-danger">👑 直通最终Boss</button>
+          <button type="button" id="m-menu-help" class="pixel-btn btn-ghost">❓ 操作说明</button>
+        </div>
+      </div>
+      <div class="mobile-menu-section">
+        <h3>关卡快速传送</h3>
+        <div class="quick-stage-grid">
+          <button type="button" class="stage-jump-btn m-stage-btn" data-stage="0">1. 蘑菇平原</button>
+          <button type="button" class="stage-jump-btn m-stage-btn" data-stage="1">2. 地下晶洞</button>
+          <button type="button" class="stage-jump-btn m-stage-btn" data-stage="2">3. 云端遗迹</button>
+          <button type="button" class="stage-jump-btn m-stage-btn" data-stage="3">4. 幽灵古堡</button>
+          <button type="button" class="stage-jump-btn boss-btn m-stage-btn" data-stage="4" style="grid-column: 1 / -1;">5. 酷霸王终焉熔岩魔城</button>
+        </div>
+      </div>
+      <form method="dialog" class="modal-footer">
+        <button value="close" class="pixel-btn btn-primary" autofocus>▶ 继续游戏</button>
+      </form>
+    </div>
+  </dialog>
+
+  <script type="module" src="../js/game.js?v=20261121a"></script>
 </body>
 </html>

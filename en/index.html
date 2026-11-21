@@ -2,13 +2,21 @@
 <html lang="en" data-locale="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#101424">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>SUPER MARIO: ROGUE ODYSSEY — Arcade Edition</title>
+  <link rel="manifest" href="../manifest.json">
+  <link rel="icon" type="image/svg+xml" href="../icons/icon.svg">
+  <link rel="apple-touch-icon" href="../icons/icon.svg">
   <link rel="canonical" href="./">
   <link rel="alternate" hreflang="en" href="./">
   <link rel="alternate" hreflang="zh-CN" href="../zh/">
-  <link rel="stylesheet" href="../style.css?v=20261120b">
-  <link rel="stylesheet" href="../styles/locale-en.css?v=20261120b">
+  <link rel="stylesheet" href="../style.css?v=20261121a">
+  <link rel="stylesheet" href="../styles/locale-en.css?v=20261121a">
+  <link rel="stylesheet" href="../styles/mobile.css?v=20261121a">
 </head>
 <body>
   <header class="top-bar">
@@ -342,6 +350,124 @@
     </div>
   </dialog>
 
-  <script type="module" src="../js/game.js?v=20261120b"></script>
+  <!-- Mobile Handheld HUD, Multi-Touch Gamepad, Rotate Prompt & Pause Menu (Hidden on Desktop) -->
+  <div class="mobile-hud-bar" aria-label="Handheld status bar">
+    <div class="mobile-hud-left">
+      <div class="m-hp-wrap" aria-label="Health">
+        <span aria-hidden="true">❤️</span>
+        <div class="m-hp-track"><div id="m-hp-fill" class="m-hp-fill" style="--m-hp-pct: 100%;"></div></div>
+        <span id="m-hp-num">100</span>
+      </div>
+      <span id="m-lv-num" class="m-stat-pill">LV.1</span>
+      <span class="m-stat-pill gold-text">🪙 <span id="m-coin-num">30</span></span>
+    </div>
+    <div class="mobile-hud-center">
+      <span id="m-stage-code" class="m-stat-pill m-stage-code">🌳 WORLD 1-1</span>
+      <span id="m-combo-pill" class="m-combo-pill" hidden>🔥 2x</span>
+      <span class="m-stat-pill">★ <span id="m-score-num">000000</span></span>
+    </div>
+    <div class="mobile-hud-right">
+      <button type="button" id="m-btn-shop" class="m-hud-btn gold" aria-label="Open Toad's Shop">🍄 Shop</button>
+      <button type="button" id="m-btn-menu" class="m-hud-btn" aria-label="Open Handheld Menu">☰ Menu</button>
+      <button type="button" id="m-btn-fullscreen" class="m-hud-btn" aria-label="Toggle Fullscreen">⛶</button>
+    </div>
+  </div>
+
+  <div class="touch-gamepad" role="group" aria-label="Virtual touch gamepad">
+    <div id="touch-dpad-zone" class="touch-dpad-zone" aria-label="Directional slide pad">
+      <div id="touch-btn-left" class="dpad-btn" aria-hidden="true">◀</div>
+      <div id="touch-btn-right" class="dpad-btn" aria-hidden="true">▶</div>
+    </div>
+
+    <div class="touch-action-zone">
+      <button type="button" id="touch-weapon-pill" class="touch-weapon-pill" aria-label="Cycle equipped weapon">
+        <span id="touch-weapon-label">🔥 Fire Staff LV.1</span>
+        <span aria-hidden="true">↻</span>
+      </button>
+      <div class="touch-action-grid">
+        <button type="button" id="touch-btn-spin" class="touch-btn touch-btn-spin" aria-label="Spin Jump">
+          <span class="t-icon" aria-hidden="true">🌪️</span>
+          <span class="t-label">SPIN</span>
+        </button>
+        <button type="button" id="touch-btn-slam" class="touch-btn touch-btn-slam" aria-label="Ground Pound">
+          <span class="t-icon" aria-hidden="true">☄️</span>
+          <span class="t-label">SLAM</span>
+        </button>
+        <button type="button" id="touch-btn-dash" class="touch-btn touch-btn-dash" aria-label="Phantom Dash">
+          <span class="t-icon" aria-hidden="true">⚡</span>
+          <span class="t-label">DASH</span>
+        </button>
+        <button type="button" id="touch-btn-atk" class="touch-btn touch-btn-atk" aria-label="Weapon Attack">
+          <span class="t-icon" aria-hidden="true">🔥</span>
+          <span class="t-label">ATK</span>
+        </button>
+        <button type="button" id="touch-btn-jump" class="touch-btn touch-btn-jump" aria-label="Jump">
+          <span class="t-icon" aria-hidden="true">⬆</span>
+          <span class="t-label">JUMP</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="portrait-rotate-gate" role="region" aria-label="Screen orientation notice">
+    <div class="rotate-phone-glyph" aria-hidden="true">📱</div>
+    <h2>ROTATE TO LANDSCAPE</h2>
+    <p>Turn your phone sideways for the full-screen 16:9 handheld arcade controls.</p>
+    <button type="button" id="btn-play-portrait" class="pixel-btn btn-primary">Play in Portrait Anyway</button>
+  </div>
+
+  <dialog id="dialog-mobile-menu" closedby="any" aria-labelledby="mobile-menu-title">
+    <div class="modal-inner">
+      <div class="modal-header">
+        <span class="modal-kicker">🎮 HANDHELD CONSOLE MENU · /EN</span>
+        <h2 id="mobile-menu-title">Paused &amp; Quick Controls</h2>
+      </div>
+      <div class="mobile-menu-stats">
+        <div class="mobile-menu-stat"><span>LEVEL</span><strong id="m-stat-lv">LV.1</strong></div>
+        <div class="mobile-menu-stat"><span>HEALTH</span><strong id="m-stat-hp">100/100</strong></div>
+        <div class="mobile-menu-stat"><span>COINS</span><strong id="m-stat-coins" class="gold-text">30 🪙</strong></div>
+        <div class="mobile-menu-stat"><span>STOMP</span><strong id="m-stat-stomp">32</strong></div>
+        <div class="mobile-menu-stat"><span>WEAPON</span><strong id="m-stat-atk">100%</strong></div>
+        <div class="mobile-menu-stat"><span>BLESSINGS</span><strong id="m-stat-perks">0</strong></div>
+      </div>
+      <div class="mobile-menu-section">
+        <h3>EDITION ROUTE &amp; SETTINGS</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center;">
+          <div class="lang-switch" role="group" aria-label="Language edition routes">
+            <a href="../en/" class="lang-btn active" data-lang="en" aria-current="page">EN <small>/en</small></a>
+            <a href="../zh/" class="lang-btn" data-lang="zh">中文 <small>/zh</small></a>
+          </div>
+          <button type="button" id="m-menu-mute" class="pixel-btn btn-ghost">🔊 SFX</button>
+          <button type="button" id="m-menu-crt" class="pixel-btn btn-ghost">CRT: ON</button>
+        </div>
+      </div>
+      <div class="mobile-menu-section">
+        <h3>ACTIONS &amp; ROGUELITE TOOLS</h3>
+        <div class="mobile-menu-grid">
+          <button type="button" id="m-menu-shop" class="pixel-btn btn-gold">🍄 Toad's Shop</button>
+          <button type="button" id="m-menu-armory" class="pixel-btn btn-secondary">⚔️ Armory &amp; Relics</button>
+          <button type="button" id="m-menu-levelup" class="pixel-btn btn-primary">✨ Test Blessing</button>
+          <button type="button" id="m-menu-unlock" class="pixel-btn btn-gold">⚡ Max All Weapons</button>
+          <button type="button" id="m-menu-boss" class="pixel-btn btn-danger">👑 Warp to Boss</button>
+          <button type="button" id="m-menu-help" class="pixel-btn btn-ghost">❓ Controls Guide</button>
+        </div>
+      </div>
+      <div class="mobile-menu-section">
+        <h3>STAGE WARP</h3>
+        <div class="quick-stage-grid">
+          <button type="button" class="stage-jump-btn m-stage-btn" data-stage="0">1. Emerald Plains</button>
+          <button type="button" class="stage-jump-btn m-stage-btn" data-stage="1">2. Crystal Cavern</button>
+          <button type="button" class="stage-jump-btn m-stage-btn" data-stage="2">3. Sky Ruins</button>
+          <button type="button" class="stage-jump-btn m-stage-btn" data-stage="3">4. Ghost Keep</button>
+          <button type="button" class="stage-jump-btn boss-btn m-stage-btn" data-stage="4" style="grid-column: 1 / -1;">5. Bowser's Molten Citadel</button>
+        </div>
+      </div>
+      <form method="dialog" class="modal-footer">
+        <button value="close" class="pixel-btn btn-primary" autofocus>▶ Resume Game</button>
+      </form>
+    </div>
+  </dialog>
+
+  <script type="module" src="../js/game.js?v=20261121a"></script>
 </body>
 </html>

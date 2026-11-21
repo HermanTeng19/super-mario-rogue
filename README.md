@@ -33,6 +33,7 @@ Combine classic **aerial stomp combos**, **Meteor Ground Pounds**, and **Cyclone
 - **6 Legendary Weapons**: Fire Flower Staff, Hammer Bros. Mallet, Boomerang Flower, Ice Storm Blaster, Thunder Star Wand, and Golden Cape Blade (with projectile parry & aerial hover).
 - **24 Roguelite Blessings & Synergies**: Chain-lightning stomps, frozen ice-shatter AoE explosions, phantom decoy dashes, twin-star multishot, coin-scaled greed damage, and 1-UP revives.
 - **5 Procedural Biome Stages + 3-Phase Final Boss**: Emerald Plains → Crystal Cavern → Gale Sky Ruins → Phantom Ghost Keep → Bowser's Molten Citadel.
+- **Mobile Handheld Console & PWA Mode (iOS Safari / Chrome / Edge)**: Opening `/en/` or `/zh/` on a smartphone automatically switches to a full-screen 16:9 landscape handheld console with a multi-touch sliding D-pad, ergonomic Jump / Hold-to-Fire Attack / Dash / Spin / midair-lit Slam buttons, quick weapon cycler, native pause menu, and PWA Home Screen install (`manifest.json`), with zero impact on desktop.
 - **Zero Dependencies & Built-in No-Cache Launcher**: Runs out of the box with `./start.sh` (Python 3).
 
 ### 🚀 Quick Start
@@ -100,6 +101,7 @@ super-mario-rogue/
 - **6 大传奇武器**：烈焰花法杖、重装战锤、旋风回旋花、极寒冰晶炮、雷霆星辉杖、黄金披风旋刃（支持弹反敌方弹幕与空中滑翔）。
 - **24 种肉鸽赐福词条**：雷霆踏云靴、猩红嗜血铁靴、熔核陨石震地、冰爆碎裂、双子星辉散射、幻影残像冲刺、1-UP 翠绿神菇复活等流派协同。
 - **5 大生态关卡 + 三阶段终焉 Boss**：蘑菇翡翠平原 → 幽暗水晶地窟 → 云端疾风遗迹 → 幻影幽灵古堡 → 酷霸王终焉熔岩魔城。
+- **手机全屏掌机模式 & PWA 支持（iOS Safari / Chrome / Edge）**：手机端访问 `/en/` 或 `/zh/` 自动切换为全屏 16:9 横屏掌机布局，内置左手连续滑动方向键、右手多点触控按键（跳跃 / 长按连发攻击 / 冲刺 / 旋风 / 空中高亮下砸）、一键切武器与掌机暂停菜单，支持“添加到主屏幕”全屏运行，桌面端零影响。
 - **一键无缓存启动脚本**：运行 `./start.sh` 即可在本地启动并自动打开游戏。
 
 ### 🚀 快速启动

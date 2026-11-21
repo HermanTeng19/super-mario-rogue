@@ -1,7 +1,7 @@
 // Procedural Side-Scrolling Roguelite Stage Generator
 
-import { STAGES } from './data.js?v=20261120b';
-import { FinalBoss } from './boss.js?v=20261120b';
+import { STAGES } from './data.js?v=20261121a';
+import { FinalBoss } from './boss.js?v=20261121a';
 
 export function generateStage(stageIndex, playerLevel = 1) {
   const stageDef = STAGES[Math.min(stageIndex, STAGES.length - 1)];

@@ -1,0 +1,19 @@
+{
+  "name": "Super Mario: Rogue Odyssey",
+  "short_name": "Mario Rogue",
+  "description": "16-Bit Pixel Action Roguelite Mario game with dedicated /en/ & /zh/ routes",
+  "start_url": "./en/",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#090c14",
+  "theme_color": "#101424",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

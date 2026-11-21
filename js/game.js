@@ -1,10 +1,11 @@
 // Main Game Engine: Physics, Combat, Weapons, Leveling, Roguelite Perks & Native Dialog UI
 
-import { sfx } from './audio.js?v=20261120b';
-import { WEAPONS, PERKS_POOL, STAGES } from './data.js?v=20261120b';
-import { drawMarioSprite, drawPortrait, drawEnemySprite, drawStageBackground } from './sprites.js?v=20261120b';
-import { generateStage, createEnemy } from './levelgen.js?v=20261120b';
-import { getLang, setLang, t, loc, RANK_TITLES, applyDomTranslations } from './i18n.js?v=20261120b';
+import { sfx } from './audio.js?v=20261121a';
+import { WEAPONS, PERKS_POOL, STAGES } from './data.js?v=20261121a';
+import { drawMarioSprite, drawPortrait, drawEnemySprite, drawStageBackground } from './sprites.js?v=20261121a';
+import { generateStage, createEnemy } from './levelgen.js?v=20261121a';
+import { getLang, setLang, t, loc, RANK_TITLES, applyDomTranslations } from './i18n.js?v=20261121a';
+import { MobileController, isTouchHandheld } from './mobile.js?v=20261121a';
 
 // Fallback for <dialog closedby="any"> per modern-web-guidance dialog rule
 if (typeof HTMLDialogElement !== 'undefined' && !('closedBy' in HTMLDialogElement.prototype)) {
@@ -43,12 +44,14 @@ export class MarioRogueGame {
     this.dlgArmory = document.getElementById('dialog-armory');
     this.dlgHelp = document.getElementById('dialog-help');
     this.dlgGameOver = document.getElementById('dialog-gameover');
+    this.dlgMobileMenu = document.getElementById('dialog-mobile-menu');
 
     applyDomTranslations();
     this.syncToggleButtonLabels();
     this.resetRun();
     this.restoreRouteStateIfAny();
     this.bindEvents();
+    this.mobile = new MobileController(this);
     this.renderCompendium();
     this.updateWeaponDock();
     this.updateAllHUD();
@@ -239,7 +242,7 @@ export class MarioRogueGame {
       damageReduction: 0,
       bonusProjectiles: 0,
       projectileScale: 1.0,
-      pickupRadius: 95,
+      pickupRadius: isTouchHandheld() ? 130 : 95,
       xpMultiplier: 1.0,
 
       // Combos & Timers
@@ -495,7 +498,8 @@ export class MarioRogueGame {
       this.dlgShop.open ||
       this.dlgArmory.open ||
       this.dlgHelp.open ||
-      this.dlgGameOver.open
+      this.dlgGameOver.open ||
+      Boolean(this.dlgMobileMenu && this.dlgMobileMenu.open)
     );
   }
 
@@ -1207,7 +1211,8 @@ export class MarioRogueGame {
           continue;
         }
 
-        const isFallingOnTop = (p.vy > 0 && (p.y + p.h - p.vy * dt) <= e.y + e.h * 0.58) || p.state === 'pound' || p.state === 'spin';
+        const stompMargin = isTouchHandheld() ? 0.66 : 0.58;
+        const isFallingOnTop = (p.vy > 0 && (p.y + p.h - p.vy * dt) <= e.y + e.h * stompMargin) || p.state === 'pound' || p.state === 'spin';
         const canStompTarget = !e.spikyTop || p.perks.safeStomp || p.state === 'spin' || p.state === 'pound';
 
         if (e.inShell && !e.shellSpinning) {
@@ -2091,6 +2096,7 @@ export class MarioRogueGame {
     }
 
     drawPortrait(this.portraitCtx, this.currentWeapon, p.starTimer > 0, this.time);
+    this.mobile?.syncHUD();
   }
 
   addLog(msg) {

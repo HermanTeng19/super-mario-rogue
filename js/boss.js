@@ -1,7 +1,7 @@
 // 3-Phase Final Boss: Mecha-Crowned King Bowser (终焉魔王·酷霸王)
 
-import { sfx } from './audio.js?v=20261120b';
-import { t } from './i18n.js?v=20261120b';
+import { sfx } from './audio.js?v=20261121a';
+import { t } from './i18n.js?v=20261121a';
 
 export class FinalBoss {
   constructor(x, y, playerLevel = 1) {
