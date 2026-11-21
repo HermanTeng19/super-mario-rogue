@@ -6,6 +6,11 @@
 </p>
 
 <p align="center">
+  <a href="https://hermanteng19.github.io/super-mario-rogue/en/">🎮 <strong>Play Online (English /en/)</strong></a> ·
+  <a href="https://hermanteng19.github.io/super-mario-rogue/zh/">🎮 <strong>在线试玩（中文旗舰版 /zh/）</strong></a>
+</p>
+
+<p align="center">
   <a href="#english">🇺🇸 English</a> ·
   <a href="#简体中文">🇨🇳 简体中文</a>
 </p>
